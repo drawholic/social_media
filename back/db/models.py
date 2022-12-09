@@ -49,3 +49,16 @@ class Comments(ModelBase):
     post = relationship(Posts, back_populates="comments")
     user = relationship(Users, back_populates="comments")
     
+
+class CommentLikes(ModelBase):
+    __tablename__ = "commentlikes"
+
+    user_id = Column(Integer, ForeignKey("users.id"))
+    post_id = Column(Integer, ForeignKey("posts.id"))
+
+
+class PostLikes(ModelBase):
+    __tablename__ = "postlikes"
+
+    user_id = Column(Integer, ForeignKey("users.id"))
+    post_id = Column(Integer, ForeignKey("posts.id"))

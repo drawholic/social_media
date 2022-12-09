@@ -6,8 +6,7 @@ class PostBase(BaseModel):
     text: str
 
 class PostCreate(PostBase):
-    user_id: int
-
+    pass
 
 class Post(PostCreate):
     likes: int

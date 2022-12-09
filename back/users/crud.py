@@ -1,5 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, and_
 from sqlalchemy.orm import selectinload
 from db.models import Users
 from .pd import UserCreate
@@ -41,7 +41,13 @@ class UserCRUD:
         res = await self.db.execute(statement=stm)
         return res.scalars().first()
 
-    
+
+    async def get_user_for_auth(self, email: str, password: str):
+        stm = select(Users).where(and_(Users.email == email, Users.password == password))
+        res = await self.db.execute(statement=stm)
+        user = res.scalars().first()
+        return user
+
 
     async def user_detail(self, user_id: int):
         stm = self._user_detail_by_id_query(user_id=user_id)
