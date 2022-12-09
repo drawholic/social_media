@@ -14,4 +14,4 @@ TODO:
 - edit posts
 - edit comments
 - tests
-- 
+- redis caching
