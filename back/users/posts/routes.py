@@ -34,8 +34,14 @@ async def create_post(post: PostCreate,
 
 
 @posts.post("/{post_id}/")
-async def like_a_post(post_id: int, db = Depends(get_db)):
-    await PostsCRUD(db).like_a_post(post_id=post_id)
+async def like_a_post(
+    post_id: int,
+    db = Depends(get_db),
+    token: str = Depends(scheme)):
+
+    user = await is_auth(token=token, db=db)
+
+    await PostsCRUD(db).like_a_post(post_id=post_id, user_id=user.id)
 
 
 @posts.delete("/unlike/{post_id}/")
