@@ -28,7 +28,8 @@ async def create_post(post: PostCreate,
                     db = Depends(get_db),
                     token: str = Depends(scheme)
                       ):
-
+    print(token)
+    
     user = await is_auth(token=token, db=db)
     await PostsCRUD(db).create_post(post=post, user_id=user.id)
 
