@@ -16,4 +16,17 @@ async def create_comment(comment: CommentCreate, db = Depends(get_db)):
 @comments.get("/{post_id}", response_model=List[Comment])
 async def list_comments(post_id: int, db = Depends(get_db)):
     return await CommentCRUD(db).list(post_id=post_id)
-    
+
+
+@comments.post("/like_comment/{comment_id}")
+async def like_comment(comment_id: int, db = Depends(get_db)):
+    await CommentCRUD(db).like_comment(comment_id=comment_id)
+
+
+@comments.delete("/unlike/{comment_id}")
+async def unlike_comment(comment_id: int, db = Depends(get_db)):
+    await CommentCRUD(db).unlike_comment(comment_id=comment_id)
+
+@comments.get("/exists/{comment_id}")
+async def exists_comment(comment_id: int, db = Depends(get_db)):
+    await CommentCRUD(db).comment_exists(comment_id=comment_id)

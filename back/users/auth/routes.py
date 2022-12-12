@@ -8,7 +8,7 @@ from .utils import generate_token
 
 auth = APIRouter(prefix='/auth', tags=["Auth"])
 
-scheme = OAuth2PasswordBearer(tokenUrl="/get_token")
+scheme = OAuth2PasswordBearer(tokenUrl="/auth/get_token")
 
 
 @auth.post("/get_token")
