@@ -9,7 +9,7 @@ DONE:
 - auth
 
 TODO: 
-- dislike comments
+- like and dislike comments
 - messages functionality
 - edit posts
 - edit comments
