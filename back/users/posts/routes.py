@@ -3,9 +3,7 @@ from db.db import get_db
 from .crud import PostsCRUD
 from .pd import PostCreate, Post
 from ..auth.routes import scheme
-from ..auth.utils import is_auth
-from ..auth.exceptions import TokenException
-from users.crud import UserCRUD
+from ..auth.utils import is_auth 
 
 posts = APIRouter(prefix="/posts", tags=['Posts'])
 
@@ -27,8 +25,7 @@ async def post_detail(post_id: int, db = Depends(get_db)):
 async def create_post(post: PostCreate,
                     db = Depends(get_db),
                     token: str = Depends(scheme)
-                      ):
-    print(token)
+                    ): 
     
     user = await is_auth(token=token, db=db)
     await PostsCRUD(db).create_post(post=post, user_id=user.id)

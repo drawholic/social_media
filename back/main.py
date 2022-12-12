@@ -37,11 +37,9 @@ async def get_token(form_data: OAuth2PasswordRequestForm = Depends(),
                     db = Depends(get_db)
 ):
     email = form_data.username
-    password = form_data.password
-    print(email, password)
+    password = form_data.password  
     user = await UserCRUD(db).get_user_for_auth(email=email, password=password)
     if user is None:
         raise AuthException
-    token = generate_token(payload=email)
-    print(token)
+    token = generate_token(payload=email) 
     return {"access_token": token, "token_type": "bearer"}

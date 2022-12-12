@@ -14,8 +14,8 @@ class CommentCRUD:
         res = await self.db.execute(stm)
         return res.scalars().all()
 
-    async def create_comment(self, comment: CommentCreate):
-        stm = Comments(**comment.dict())
+    async def create_comment(self, comment: CommentCreate, user_id: int):
+        stm = Comments(**comment.dict(), user_id=user_id)
         self.db.add(stm)
         await self.db.commit()
     
