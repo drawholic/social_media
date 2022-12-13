@@ -1,10 +1,9 @@
 from sqlalchemy import select, and_, func
 from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
-from db.models import Posts, PostLikes
-
-from .exceptions import PostDoesNotExist, PostAlreadyLiked, PostNotLiked
-from typing import List, Union
+from db.models import Posts, PostLikes 
+from .exceptions import PostDoesNotExist, PostAlreadyLiked, PostNotLiked, PostForbidden, PostLikesQuantityException
+from typing import List, Union 
 
 
 class PostsCRUD:
@@ -76,17 +75,46 @@ class PostsCRUD:
         if await self._get_post_like(post_id=post_id, user_id=user_id):
             raise PostAlreadyLiked   
 
-        post_like = PostLikes(post_id=post_id, user_id=user_id)   
+        post_like = PostLikes(post_id=post_id, user_id=user_id) 
+
+        post = await self.get_post_by_id(post_id=post_id)
+        post.likes = post.likes + 1
 
         self.db.add(post_like)
+        
         await self.db.commit()
     
+
+    async def _is_author(self, post_id: int, user_id: int):
+        post = select(Posts).where(and_(Posts.id == post_id, Posts.user_id == user_id))
+        res = await self.db.execute(post)
+        post = res.scalars().first()
+        if post is None:
+            raise PostForbidden
+        return True
+
+
     async def unlike_a_post(self, post_id: int, user_id: int):
         await self.post_exists(post_id=post_id)
+
         if not (await self._get_post_like(post_id=post_id, user_id=user_id)):
             raise PostNotLiked
 
+        postlike = await self._get_post_like(user_id=user_id, post_id=post_id)
+        post = await self.get_post_by_id(post_id=post_id)
+        
+        if (post.likes - 1) < 0:
+            raise PostLikesQuantityException
+        
+        post.likes = post.likes - 1
+        await self.db.delete(postlike)
+        await self.db.commit()
 
-        post = await self._get_post_like(user_id=user_id, post_id=post_id)
+
+    async def delete_post(self, post_id: int, user_id: int):
+        await self.post_exists(post_id=post_id)
+        await self._is_author(user_id=user_id, post_id=post_id)
+
+        post = await self.get_post_by_id(post_id=post_id)
         await self.db.delete(post)
         await self.db.commit()

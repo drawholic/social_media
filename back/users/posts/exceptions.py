@@ -14,3 +14,13 @@ class PostAlreadyLiked(HTTPException):
 class PostNotLiked(HTTPException):
     def __init(self):
         super().__init__(status_code=400, detail="Post is not liked")
+
+
+class PostForbidden(HTTPException):
+    def __init(self):
+        super().__init__(status_code=400, detail="Post changes is forbidden for the user")
+
+
+class PostLikesQuantityException(HTTPException):
+    def __init(self):
+        super().__init__(status_code=400, detail="Post likes cannot be less than 0")
