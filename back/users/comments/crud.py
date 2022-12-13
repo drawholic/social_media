@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from .pd import CommentCreate
-from db.models import Comments
-from sqlalchemy import select
+from db.models import Comments, CommentLikes
+from sqlalchemy import select, exists
 
 
 class CommentCRUD:
@@ -19,10 +19,14 @@ class CommentCRUD:
         self.db.add(stm)
         await self.db.commit()
     
+    async def comment_exists(self, comment_id: int):
+        stm = exists(Comments).where(Comments.id == comment_id)
+        res = await self.db.execute(statement=stm)
+        comment_exists = res.scalars().first()
+        print("COMMENT EXISTS: ", comment_exists)
+    
     async def like_comment(self, comment_id: int):
         stm = select(Comments).where(Comments.id == comment_id)
         res = await self.db.execute(stm)
         comment = res.scalars().first()
-        comment.likes = comment.likes + 1
-        await self.db.commit()
-
+        
