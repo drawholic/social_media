@@ -15,8 +15,8 @@ async def create_comment(
      db = Depends(get_db),
      token = Depends(scheme)
      ):
+     
     user = await is_auth(token=token, db=db)
-
     await CommentCRUD(db).create_comment(comment=comment, user_id= user.id)
 
 
