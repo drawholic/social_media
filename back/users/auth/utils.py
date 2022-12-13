@@ -10,14 +10,14 @@ def generate_token(payload: str) -> str:
     token = encode({"payload": payload}, SECRETKEY,  algorithm='HS256')
     return token
 
-
-def get_email(token):
-    payload = decode(token, SECRETKEY, algorithms=['HS256'])
-    return payload["payload"]
+ 
+def get_email(token): 
+    payload = decode(jwt=token, key=SECRETKEY, algorithms=['HS256'])
+    return payload["email"]
 
 
 async def is_auth(token: str, db):
-    email = get_email(token=token)
+    email = get_email(token) 
     user = await UserCRUD(db).get_user_by_email(email=email)
     if user is None:
         raise TokenException

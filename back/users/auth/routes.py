@@ -1,9 +1,5 @@
-from fastapi import APIRouter, Depends
-from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
-from db.db import get_db
-from users.crud import UserCRUD
-from .exceptions import AuthException
-from .utils import generate_token
+from fastapi import Depends
+from fastapi.security import OAuth2PasswordBearer 
 
 
 auth = APIRouter(prefix='/auth', tags=["Auth"])
@@ -21,5 +17,5 @@ async def get_token(form_data: OAuth2PasswordRequestForm = Depends(),
     if user is None:
         raise AuthException
     token = generate_token(payload=email)
-    return {"token": token}
+    return {"token": token} 
 

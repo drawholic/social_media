@@ -3,9 +3,7 @@ from db.db import get_db
 from .crud import PostsCRUD
 from .pd import PostCreate, Post
 from ..auth.routes import scheme
-from ..auth.utils import is_auth
-from ..auth.exceptions import TokenException
-from users.crud import UserCRUD
+from ..auth.utils import is_auth 
 
 posts = APIRouter(prefix="/posts", tags=['Posts'])
 
@@ -23,17 +21,17 @@ async def post_detail(post_id: int, db = Depends(get_db)):
     return await PostsCRUD(db).post_detail(post_id=post_id)
 
 
-@posts.post("", status_code=201)
+@posts.post("/create/", status_code=201)
 async def create_post(post: PostCreate,
                     db = Depends(get_db),
                     token: str = Depends(scheme)
-                      ):
-
+                    ): 
+    
     user = await is_auth(token=token, db=db)
     await PostsCRUD(db).create_post(post=post, user_id=user.id)
 
 
-@posts.post("/{post_id}/")
+@posts.post("/like/{post_id}/")
 async def like_a_post(
     post_id: int,
     db = Depends(get_db),
@@ -44,9 +42,20 @@ async def like_a_post(
     await PostsCRUD(db).like_a_post(post_id=post_id, user_id=user.id)
 
 
-@posts.delete("/unlike/{post_id}/")
+@posts.delete("/unlike/{post_id}/", status_code=204)
 async def unline_a_post(
                         post_id: int,
                         db = Depends(get_db),
                         token = Depends(scheme)):
-    pass
+    user = await is_auth(token=token, db=db)
+    await PostsCRUD(db).unlike_a_post(post_id=post_id, user_id=user.id)
+
+
+@posts.delete('/delete_post/{post_id}', status_code=204)
+async def delete_post(
+    post_id: int,
+    db = Depends(get_db),
+    token: str = Depends(scheme)
+    ):
+    user = await is_auth(token=token, db=db)
+    await PostsCRUD(db).delete_post(post_id=post_id, user_id=user.id)

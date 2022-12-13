@@ -6,8 +6,7 @@ class CommentBase(BaseModel):
 
 
 class CommentCreate(CommentBase):
-    post_id: int
-    user_id: int
+    post_id: int 
 
 
 class Comment(CommentCreate):
